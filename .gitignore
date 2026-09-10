@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+dist/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Request logs
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Only the repo-root .env: the honeypot serves a fake .env as a lure, which must stay tracked.
+/.env
