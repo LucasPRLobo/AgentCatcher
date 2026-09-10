@@ -16,16 +16,21 @@ poetry install --with dev        # add --with notebooks for Jupyter
 poetry add <pkg>                 # runtime dependency; poetry add --group dev <pkg> for tooling
 
 poetry run pytest                # all tests
-poetry run pytest tests/test_app.py::test_fastapi_default_docs_are_not_exposed   # a single test
+poetry run pytest tests/test_db.py::test_session_stream_round_trips   # a single test
 poetry run ruff format . && poetry run ruff check --fix .
 poetry run uvicorn agentcatcher.honeypot.app:app --reload
+
+# Database (session log). The URL comes from AGENTCATCHER_DB_URL, else a local
+# sqlite file (agentcatcher.db); Alembic reads it through agentcatcher.db.get_engine().
+poetry run alembic upgrade head                      # create / migrate the schema
+poetry run alembic revision --autogenerate -m "msg"  # new migration after editing db.py
 ```
 
 CI (`.github/workflows/ci.yml`) runs `ruff format --check`, `ruff check` and `pytest` on every push and pull request.
 
 ## Layout
 
-`src/agentcatcher/` has one subpackage per component: `honeypot/` (A), `traffic/` (B) and `classifier/` (C). `schemas.py` holds the pydantic models for the session log that all three share.
+`src/agentcatcher/` has one subpackage per component: `honeypot/` (A), `traffic/` (B) and `classifier/` (C). `db.py` is the session-log schema — SQLAlchemy models (`sessions`, `requests`, `lure_hits`, `runs`) plus engine/session helpers — and `schemas.py` holds the matching pydantic DTOs. Migrations live in `alembic/`. `lure_hits` (and lure paths) are labels/forensics only and must never be read by classifier feature code.
 
 ## Stack
 
