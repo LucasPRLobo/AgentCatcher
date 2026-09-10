@@ -1,0 +1,46 @@
+[project]
+name = "agentcatcher"
+version = "0.1.0"
+description = "Agent honeypot and AI-traffic classifier"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.141",
+    "uvicorn>=0.30",
+    "pydantic>=2.13",
+    "sqlalchemy>=2.0",
+    "alembic>=1.13",
+    "pandas>=3.0",
+    "numpy>=2.5",
+    "scikit-learn>=1.9",
+]
+
+[tool.poetry]
+packages = [{ include = "agentcatcher", from = "src" }]
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0"
+httpx = ">=0.28"
+ruff = ">=0.6"
+
+[tool.poetry.group.notebooks]
+optional = true
+
+[tool.poetry.group.notebooks.dependencies]
+jupyter = ">=1.1"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+# Alembic migrations are generated code; lint our own env.py but not the versions.
+extend-exclude = ["alembic/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
